@@ -20,9 +20,14 @@ public:
     void stopNote(float velocity, bool allowTailOff) override;
     void controllerMoved(int controllerNumber, int newControllerValue) override;
     void pitchWheelMoved(int newPitchWheelValue) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels);
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
 
 private:
+    juce::AudioBuffer<float> synthBuffer;
 
+    juce::dsp::Oscillator<float> osc{ [](float x) {return std::sin(x); } };
+    juce::dsp::Gain<float> gain;
+    bool isPrepared{ false };
 };
 

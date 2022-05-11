@@ -22,7 +22,7 @@ _3OSCsynthAudioProcessor::_3OSCsynthAudioProcessor()
                        )
 #endif
 {
-    synth.addSound(new SynthSound()); //automatically remove when it's done
+    synth.addSound(new SynthSound()); 
     synth.addVoice(new SynthVoice());
 
 }
@@ -96,9 +96,15 @@ void _3OSCsynthAudioProcessor::changeProgramName (int index, const juce::String&
 //==============================================================================
 void _3OSCsynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
     synth.setCurrentPlaybackSampleRate(sampleRate);
+    
+    for (int i = 0; i < synth.getNumVoices(); i++)
+    {
+        if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
+        {
+            voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+        }
+    }
 }
 
 void _3OSCsynthAudioProcessor::releaseResources()
@@ -153,6 +159,8 @@ void _3OSCsynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             //LFO
         }
     }
+
+   
 
     //rendering the voice by synth
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
