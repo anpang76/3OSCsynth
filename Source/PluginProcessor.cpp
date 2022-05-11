@@ -22,6 +22,9 @@ _3OSCsynthAudioProcessor::_3OSCsynthAudioProcessor()
                        )
 #endif
 {
+    synth.addSound(new SynthSound()); //automatically remove when it's done
+    synth.addVoice(new SynthVoice());
+
 }
 
 _3OSCsynthAudioProcessor::~_3OSCsynthAudioProcessor()
@@ -95,6 +98,7 @@ void _3OSCsynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    synth.setCurrentPlaybackSampleRate(sampleRate);
 }
 
 void _3OSCsynthAudioProcessor::releaseResources()
@@ -135,27 +139,23 @@ void _3OSCsynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+    //to avoid people getting screaming feedback
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    //check correctly every voices casted then work
+    for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
+        if (auto voice = dynamic_cast<juce::SynthesiserVoice*>(synth.getVoice(i)))
+        {
+            //Osc controls
+            //ADSR
+            //LFO
+        }
     }
+
+    //rendering the voice by synth
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================
