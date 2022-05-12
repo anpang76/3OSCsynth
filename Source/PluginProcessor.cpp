@@ -19,11 +19,14 @@ _3OSCsynthAudioProcessor::_3OSCsynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), apvts(*this, nullptr, "Parameters", createParams())
 #endif
 {
-    synth.addSound(new SynthSound()); 
+    synth.addSound(new SynthSound());
+
+   
     synth.addVoice(new SynthVoice());
+   
 
 }
 
@@ -148,20 +151,8 @@ void _3OSCsynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     //to avoid people getting screaming feedback
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    //check correctly every voices casted then work
-    for (int i = 0; i < synth.getNumVoices(); ++i)
-    {
-        if (auto voice = dynamic_cast<juce::SynthesiserVoice*>(synth.getVoice(i)))
-        {
-            //Osc controls
-            //ADSR
-            //LFO
-        }
-    }
-
-   
-
+    
+    setParams();
     //rendering the voice by synth
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 }
@@ -196,4 +187,72 @@ void _3OSCsynthAudioProcessor::setStateInformation (const void* data, int sizeIn
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new _3OSCsynthAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout _3OSCsynthAudioProcessor::createParams()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    // OSC select
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC1", "Oscillator 1", juce::StringArray{ "Sine", "Saw", "Square" ,"Triangle"}, 0));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC2", "Oscillator 2", juce::StringArray{ "Sine", "Saw", "Square" ,"Triangle"}, 0));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("OSC3", "Oscillator 3", juce::StringArray{ "Sine", "Saw", "Square" ,"Triangle"}, 0));
+    
+    // OSC Gain
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("OSC2GAIN", "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("OSC3GAIN", "Oscillator 3 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+
+    // OSC Pitch
+    params.push_back(std::make_unique<juce::AudioParameterInt>("OSC1PITCH", "Oscillator 1 Pitch", -48, 48, 0));
+    params.push_back(std::make_unique<juce::AudioParameterInt>("OSC2PITCH", "Oscillator 2 Pitch", -48, 48, 0));
+    params.push_back(std::make_unique<juce::AudioParameterInt>("OSC3PITCH", "Oscillator 3 Pitch", -48, 48, 0));
+
+    return { params.begin(), params.end() };
+
+}
+
+void _3OSCsynthAudioProcessor::setParams()
+{
+    setVoiceParams();
+}
+
+void _3OSCsynthAudioProcessor::setVoiceParams()
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
+        {   
+           
+            auto& osc1Choice = *apvts.getRawParameterValue("OSC1");
+            auto& osc1Gain = *apvts.getRawParameterValue("OSC1GAIN");
+            auto& osc1Pitch = *apvts.getRawParameterValue("OSC1PITCH");
+
+            auto& osc2Choice = *apvts.getRawParameterValue("OSC2");
+            auto& osc2Gain = *apvts.getRawParameterValue("OSC2GAIN");
+            auto& osc2Pitch = *apvts.getRawParameterValue("OSC2PITCH");
+
+            auto& osc3Choice = *apvts.getRawParameterValue("OSC3");
+            auto& osc3Gain = *apvts.getRawParameterValue("OSC3GAIN");
+            auto& osc3Pitch = *apvts.getRawParameterValue("OSC3PITCH");
+
+            auto& osc1 = voice->getOscillator1();
+            auto& osc2 = voice->getOscillator2();
+            auto& osc3 = voice->getOscillator3();
+
+            for (int i = 0; i < getTotalNumOutputChannels(); i++)
+            {
+                osc1[i].setParams(osc1Choice, osc1Gain, osc1Pitch);
+                osc2[i].setParams(osc2Choice, osc2Gain, osc2Pitch);
+                osc3[i].setParams(osc3Choice, osc3Gain, osc3Pitch);
+
+            }
+
+        }
+
+    }
+
+
+
+
 }

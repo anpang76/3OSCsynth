@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "SynthSound.h"
+#include "OscData.h"
 
 class SynthVoice : public juce::SynthesiserVoice
 {
@@ -22,12 +23,22 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override;
     void prepareToPlay(double sampleRate, int samplesPerBlock, int outputChannels);
     void renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
+    void reset();
+
+    std::array<OscData, 3>& getOscillator1() { return osc1; }
+    std::array<OscData, 3>& getOscillator2() { return osc2; }
+    std::array<OscData, 3>& getOscillator3() { return osc3; }
 
 private:
-    juce::AudioBuffer<float> synthBuffer;
+    static constexpr int numChannelsToProcess{ 3 };
+    std::array<OscData, numChannelsToProcess> osc1;
+    std::array<OscData, numChannelsToProcess> osc2;
+    std::array<OscData, numChannelsToProcess> osc3;
 
-    juce::dsp::Oscillator<float> osc{ [](float x) {return std::sin(x); } };
+
+    juce::AudioBuffer<float> synthBuffer;
     juce::dsp::Gain<float> gain;
+    
     bool isPrepared{ false };
 };
 
