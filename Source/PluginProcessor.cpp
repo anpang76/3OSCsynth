@@ -25,7 +25,11 @@ _3OSCsynthAudioProcessor::_3OSCsynthAudioProcessor()
     synth.addSound(new SynthSound());
 
    
-    synth.addVoice(new SynthVoice());
+    //synth.addVoice(new SynthVoice());
+    for (int i = 0; i < 5; i++)
+    {
+        synth.addVoice(new SynthVoice());
+    }
    
 
 }
@@ -108,6 +112,11 @@ void _3OSCsynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
             voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
         }
     }
+
+    juce::dsp::ProcessSpec spec;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+    spec.numChannels = getTotalNumOutputChannels();
 }
 
 void _3OSCsynthAudioProcessor::releaseResources()
@@ -208,6 +217,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout _3OSCsynthAudioProcessor::cr
     params.push_back(std::make_unique<juce::AudioParameterInt>("OSC2PITCH", "Oscillator 2 Pitch", -48, 48, 0));
     params.push_back(std::make_unique<juce::AudioParameterInt>("OSC3PITCH", "Oscillator 3 Pitch", -48, 48, 0));
 
+    //AMP ADSR 
     params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 1.0f));
