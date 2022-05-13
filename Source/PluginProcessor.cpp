@@ -239,7 +239,7 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
             auto& osc1 = voice->getOscillator1();
             auto& osc2 = voice->getOscillator2();
             auto& osc3 = voice->getOscillator3();
-
+            
             for (int i = 0; i < getTotalNumOutputChannels(); i++)
             {
                 osc1[i].setParams(osc1Choice, osc1Gain, osc1Pitch);
@@ -247,7 +247,7 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
                 osc3[i].setParams(osc3Choice, osc3Gain, osc3Pitch);
 
             }
-
+            
         }
 
     }
