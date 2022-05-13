@@ -6,11 +6,16 @@
   <MAINGROUP id="QkUQFJ" name="3OSCsynth">
     <GROUP id="{588E55D1-F563-243D-9284-EF0191B5994F}" name="Source">
       <GROUP id="{9774CDF4-866D-B945-49D9-E90C2241AC78}" name="UI">
+        <FILE id="cQePDZ" name="AdsrComponent.cpp" compile="1" resource="0"
+              file="Source/AdsrComponent.cpp"/>
+        <FILE id="sWfNBw" name="AdsrComponent.h" compile="0" resource="0" file="Source/AdsrComponent.h"/>
         <FILE id="EwtrQH" name="OscComponent.cpp" compile="1" resource="0"
               file="Source/OscComponent.cpp"/>
         <FILE id="UjMrhQ" name="OscComponent.h" compile="0" resource="0" file="Source/OscComponent.h"/>
       </GROUP>
       <GROUP id="{4035DE45-6DF1-D62F-6642-DE1B2AB78F13}" name="Data">
+        <FILE id="jT1mb9" name="AdsrData.cpp" compile="1" resource="0" file="Source/AdsrData.cpp"/>
+        <FILE id="VhDdiP" name="AdsrData.h" compile="0" resource="0" file="Source/AdsrData.h"/>
         <FILE id="A4O0mR" name="OscData.cpp" compile="1" resource="0" file="Source/OscData.cpp"/>
         <FILE id="sMRlq9" name="OscData.h" compile="0" resource="0" file="Source/OscData.h"/>
       </GROUP>
