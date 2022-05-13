@@ -12,10 +12,23 @@
 #include "AdsrComponent.h"
 
 //==============================================================================
-AdsrComponent::AdsrComponent()
+AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "ATTACK", attackSlider);
+    decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "DECAY", attackSlider);
+    sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "SUSTAIN", attackSlider);
+    releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "RELEASE", attackSlider);
+    
+    setSliderParams(attackSlider);
+    setSliderParams(decaySlider);
+    setSliderParams(sustainSlider);
+    setSliderParams(releaseSlider);
+   
+    //set label 
+    setSliderLabel(attackLabel, "A");
+    setSliderLabel(decayLabel, "D");
+    setSliderLabel(sustainLabel, "S");
+    setSliderLabel(releaseLabel, "R");
 
 }
 
@@ -25,27 +38,52 @@ AdsrComponent::~AdsrComponent()
 
 void AdsrComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    g.fillAll(juce::Colour::fromRGB(49, 55, 59));
+    auto bounds = getLocalBounds();
+    g.setColour(juce::Colour::fromRGB(40, 44, 49));
+    g.fillRoundedRectangle(bounds.toFloat(), 5.0f);
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("AdsrComponent", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
+    g.setColour(juce::Colour::fromRGB(209, 214, 218));
+    g.setFont(15.0f);
+    g.drawText("Envelope", 5, 10, 100, 25, juce::Justification::centred);
 }
 
 void AdsrComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+    const auto bounds = getLocalBounds().reduced(10);
+    const auto padding = 10;
+    const auto sliderWidth = bounds.getWidth() / 4 - padding;
+    const auto sliderHeight = bounds.getHeight() - 35 ;
+    const auto sliderStartX = 10;
+    const auto sliderStartY = 25;
+    const auto labelHeight = 10;
+
+    attackSlider.setBounds(sliderStartX, sliderStartY, sliderWidth, sliderHeight);
+    decaySlider.setBounds(attackSlider.getRight() + padding, sliderStartY, sliderWidth, sliderHeight);
+    sustainSlider.setBounds(decaySlider.getRight() + padding, sliderStartY, sliderWidth, sliderHeight);
+    releaseSlider.setBounds(sustainSlider.getRight() + padding, sliderStartY, sliderWidth, sliderHeight);
+
+    attackLabel.setBounds(attackSlider.getX(), attackSlider.getBottom()+5, sliderWidth, labelHeight);
+    decayLabel.setBounds(decaySlider.getX(), decaySlider.getBottom()+5, sliderWidth, labelHeight);
+    sustainLabel.setBounds(sustainSlider.getX(), sustainSlider.getBottom()+5, sliderWidth, labelHeight);
+    releaseLabel.setBounds(releaseSlider.getX(), releaseSlider.getBottom()+5, sliderWidth, labelHeight);
+
+
+}
+
+void AdsrComponent::setSliderParams(juce::Slider& slider)
+{
+    slider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+    addAndMakeVisible(slider);
+}
+
+void AdsrComponent::setSliderLabel(juce::Label& label, juce::String label_name)
+{
+    label.setFont(13.0f);
+    label.setText(label_name, juce::dontSendNotification);
+    label.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(label);
+
 
 }

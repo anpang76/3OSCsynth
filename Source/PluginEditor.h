@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "OscComponent.h"
+#include "AdsrComponent.h"
 
 //==============================================================================
 /**
@@ -32,6 +33,7 @@ private:
     OscComponent osc1; 
     OscComponent osc2;
     OscComponent osc3;
+    AdsrComponent adsr;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (_3OSCsynthAudioProcessorEditor)
 };

@@ -17,6 +17,7 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     , osc1(audioProcessor.apvts, "OSC1","OSC1GAIN","OSC1PITCH")
     , osc2(audioProcessor.apvts, "OSC2", "OSC2GAIN", "OSC2PITCH")
     , osc3(audioProcessor.apvts, "OSC3", "OSC3GAIN", "OSC3PITCH")
+    , adsr(audioProcessor.apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -24,10 +25,8 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     addAndMakeVisible(osc3);
-
-    osc1.setName("OSC1");
-    osc2.setName("OSC2");
-    osc3.setName("OSC3");
+    addAndMakeVisible(adsr);
+    
 
     setSize(830, 630);
 }
@@ -54,4 +53,5 @@ void _3OSCsynthAudioProcessorEditor::resized()
     osc1.setBounds(10, posy, oscWidth, oscHeight);
     osc2.setBounds(osc1.getRight() + 15, posy, oscWidth, oscHeight);
     osc3.setBounds(osc2.getRight() + 15, posy, oscWidth, oscHeight);
+    adsr.setBounds(osc3.getX(), osc1.getBottom()+15, oscWidth, oscHeight*2);
 }

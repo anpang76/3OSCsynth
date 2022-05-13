@@ -259,7 +259,7 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
                 osc3[i].setParams(osc3Choice, osc3Gain, osc3Pitch);
             }
             
-            adsr.updateADSR(attack.load(), decay.load(), sustain.load(), release.load());
+            adsr.updateADSR(attack, decay, sustain, release);
 
         }
 
