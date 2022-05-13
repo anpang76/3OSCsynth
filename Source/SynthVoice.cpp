@@ -25,12 +25,14 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     }
 
     adsr.noteOn();
+    filterAdsr.noteOn();
 
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
     adsr.noteOff();
+    filterAdsr.noteOff();
 
     if (!allowTailOff || !adsr.isActive())
         clearCurrentNote();
@@ -51,6 +53,7 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     reset();
 
     adsr.setSampleRate(sampleRate);
+    filterAdsr.setSampleRate(sampleRate);
     
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
@@ -62,6 +65,7 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
         osc1[ch].prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
         osc2[ch].prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
         osc3[ch].prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
+        filter[ch].prepareToPlay(sampleRate, samplesPerBlock, outputChannels);
       
     }
     
@@ -81,6 +85,10 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int s
         return;
 
     synthBuffer.setSize(outputBuffer.getNumChannels(),numSamples, false, false,true);
+    
+    filterAdsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
+    filterAdsrOutput = filterAdsr.getNextSample();
+    
     synthBuffer.clear();
 
     juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
@@ -99,7 +107,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int s
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
     
     
-    for (int channel = 0; channel < outputBuffer.getNumChannels(); channel++)
+    for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
     {
         outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);
         
@@ -113,4 +121,16 @@ void SynthVoice::reset()
 {
     gain.reset();
     adsr.reset();
+    filterAdsr.reset();
+}
+
+void SynthVoice::updateModParams(const int filterType, const float filterCutoff, const float filterResonance, const float adsrDepth)
+{
+    auto cutoff = (adsrDepth*filterAdsrOutput) + filterCutoff;
+    cutoff = std::clamp<float>(cutoff, 20.0f, 20000.0f);
+
+    for (int ch = 0; ch < numChannelsToProcess; ++ch)
+    {
+        filter[ch].setParams(filterType, cutoff, filterResonance);
+    }
 }

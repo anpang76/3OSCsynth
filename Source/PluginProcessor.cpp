@@ -223,6 +223,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout _3OSCsynthAudioProcessor::cr
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
 
+    //Filter
+    params.push_back(std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray{ "Low Pass", "Band Pass", "High Pass" }, 0));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 20000.0f, "Hz"));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERRESONANCE", "Filter Resonance", juce::NormalisableRange<float> { 0.1f, 2.0f, 0.1f }, 0.1f, ""));
+
+    //Filter ADSR 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERADSRDEPTH", "Filter ADSR Depth", juce::NormalisableRange<float> { 0.0f, 10000.0f, 0.1f, 0.3f }, 10000.0f, ""));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERATTACK", "Filter Attack", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.01f }, 0.01f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERDECAY", "Filter Decay", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.1f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERSUSTAIN", "Filter Sustain", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FILTERRELEASE", "Filter Release", juce::NormalisableRange<float> { 0.0f, 3.0f, 0.1f }, 0.1f));
 
     return { params.begin(), params.end() };
 
@@ -256,11 +267,17 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
             auto& osc3Gain = *apvts.getRawParameterValue("OSC3GAIN");
             auto& osc3Pitch = *apvts.getRawParameterValue("OSC3PITCH");
 
+            auto& filterAttack = *apvts.getRawParameterValue("FILTERATTACK");
+            auto& filterDecay = *apvts.getRawParameterValue("FILTERDECAY");
+            auto& filterSustain = *apvts.getRawParameterValue("FILTERSUSTAIN");
+            auto& filterRelease = *apvts.getRawParameterValue("FILTERRELEASE");
+
             auto& osc1 = voice->getOscillator1();
             auto& osc2 = voice->getOscillator2();
             auto& osc3 = voice->getOscillator3();
 
             auto& adsr = voice->getAdsr();
+            auto& filterAdsr = voice->getFilterAdsr();
             
             for (int i = 0; i < getTotalNumOutputChannels(); i++)
             {
@@ -270,12 +287,24 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
             }
             
             adsr.updateADSR(attack, decay, sustain, release);
-
+            filterAdsr.updateADSR(filterAttack, filterDecay, filterSustain, filterRelease);
         }
-
     }
+}
 
+void _3OSCsynthAudioProcessor::setFilterParams()
+{
+    auto& filterType = *apvts.getRawParameterValue("FILTERTYPE");
+    auto& filterCutoff = *apvts.getRawParameterValue("FILTERCUTOFF");
+    auto& filterResonance = *apvts.getRawParameterValue("FILTERRESONANCE");
+    auto& adsrDepth = *apvts.getRawParameterValue("FILTERADSRDEPTH");
 
-
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        if (auto voice = dynamic_cast<SynthVoice*>(synth.getVoice(i)))
+        {
+            voice->updateModParams(filterType, filterCutoff, filterResonance, adsrDepth);
+        }
+    }
 
 }
