@@ -91,8 +91,6 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int s
     
     synthBuffer.clear();
 
-    juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
-    
     for (int ch = 0; ch < synthBuffer.getNumChannels(); ++ch)
     {
         auto* buffer = synthBuffer.getWritePointer(ch, 0);
@@ -102,11 +100,24 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int s
             buffer[s] = osc1[ch].processNextSample(buffer[s])+osc2[ch].processNextSample(buffer[s])+osc3[ch].processNextSample(buffer[s]);
         }
     }
-    
+
+    juce::dsp::AudioBlock<float> audioBlock{ synthBuffer };
+
     gain.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, synthBuffer.getNumSamples());
     
-    
+   
+    for (int ch = 0; ch < synthBuffer.getNumChannels(); ++ch)
+    {
+        auto* buffer = synthBuffer.getWritePointer(ch, 0);
+
+        for (int s = 0; s < synthBuffer.getNumSamples(); ++s)
+        {
+            buffer[s] = filter[ch].processNextSample(ch, synthBuffer.getSample(ch, s));
+        }
+    }
+
+
     for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
     {
         outputBuffer.addFrom(channel, startSample, synthBuffer, channel, 0, numSamples);

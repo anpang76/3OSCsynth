@@ -17,12 +17,11 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     , osc1(audioProcessor.apvts, "OSC1","OSC1GAIN","OSC1PITCH")
     , osc2(audioProcessor.apvts, "OSC2", "OSC2GAIN", "OSC2PITCH")
     , osc3(audioProcessor.apvts, "OSC3", "OSC3GAIN", "OSC3PITCH")
-    , adsr(audioProcessor.apvts, "Envelope", "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
+    , adsr(audioProcessor.apvts, "Envelope","ATTACK", "DECAY", "SUSTAIN", "RELEASE")
     , filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRESONANCE")
-    , filterAdsr(audioProcessor.apvts,"Filter Envelope", "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
+    , filterAdsr(audioProcessor.apvts, "Filter Envelope", "FILTERATTACK", "FILTERDECAY", "FILTERSUSTAIN", "FILTERRELEASE")
 {
    //adding logo
-
     auto logoImage = juce::ImageCache::getFromMemory(BinaryData::Logo_png, BinaryData::Logo_pngSize);
     
     if (logoImage.isValid())
@@ -30,9 +29,14 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     else
         jassertfalse;
 
+    osc1.setName("OSC1");
+    osc2.setName("OSC2");
+    osc3.setName("OSC3");
+    filter.setName("Filter");
+    filterAdsr.setName("Filter ADSR");
+    adsr.setName("ADSR");
 
 
-  
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     addAndMakeVisible(osc3);
@@ -40,8 +44,6 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     addAndMakeVisible(filter);
     addAndMakeVisible(filterAdsr);
     addAndMakeVisible(logo);
-
-   
 
     setSize(830, 500);
 }

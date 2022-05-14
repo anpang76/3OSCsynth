@@ -12,12 +12,12 @@
 #include "AdsrComponent.h"
 
 //==============================================================================
-AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts, juce::String labelName, juce::String attackId, juce::String decayId, juce::String sustainId, juce::String releaseId)
+AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts, juce::String labelname, juce::String attackId, juce::String decayId, juce::String sustainId, juce::String releaseId)
 {
-    attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "ATTACK", attackSlider);
-    decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "DECAY", decaySlider);
-    sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "SUSTAIN", sustainSlider);
-    releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "RELEASE", releaseSlider);
+    attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, attackId, attackSlider);
+    decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, decayId, decaySlider);
+    sustainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, sustainId, sustainSlider);
+    releaseAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, releaseId, releaseSlider);
     
     setSliderParams(attackSlider);
     setSliderParams(decaySlider);
@@ -31,7 +31,7 @@ AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts, juce::St
     setSliderLabel(releaseLabel, "R");
 
     AdsrLabel.setFont(16.0f);
-    AdsrLabel.setText(labelName, juce::dontSendNotification);
+    AdsrLabel.setText(labelname, juce::dontSendNotification);
     AdsrLabel.setJustificationType(juce::Justification::topLeft);
     addAndMakeVisible(AdsrLabel);
 }

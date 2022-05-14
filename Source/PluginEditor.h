@@ -23,18 +23,17 @@ public:
     _3OSCsynthAudioProcessorEditor (_3OSCsynthAudioProcessor&);
     ~_3OSCsynthAudioProcessorEditor() override;
 
-    //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     _3OSCsynthAudioProcessor& audioProcessor;
     OscComponent osc1; 
     OscComponent osc2;
     OscComponent osc3;
+
     AdsrComponent adsr;
+
     FilterComponent filter;
     AdsrComponent filterAdsr;
 

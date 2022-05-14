@@ -34,10 +34,6 @@ float FilterData::processNextSample(int channel, float inputValue)
 {
     return processSample(channel, inputValue);
 }
-void FilterData::resetAll()
-{
-    reset();
-}
 
 void FilterData::setParams(const int filterType, const float filterCutoff, const float filterResonance)
 {
@@ -66,4 +62,9 @@ void FilterData::selectFilterType(const int type)
         setType(juce::dsp::StateVariableTPTFilterType::lowpass);
         break;
     }
+}
+
+void FilterData::resetAll()
+{
+    reset();
 }

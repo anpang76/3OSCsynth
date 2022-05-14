@@ -242,6 +242,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout _3OSCsynthAudioProcessor::cr
 void _3OSCsynthAudioProcessor::setParams()
 {
     setVoiceParams();
+    setFilterParams();
 }
 
 void _3OSCsynthAudioProcessor::setVoiceParams()
@@ -286,8 +287,8 @@ void _3OSCsynthAudioProcessor::setVoiceParams()
                 osc3[i].setParams(osc3Choice, osc3Gain, osc3Pitch);
             }
             
-            adsr.updateADSR(attack, decay, sustain, release);
-            filterAdsr.updateADSR(filterAttack, filterDecay, filterSustain, filterRelease);
+            adsr.updateADSR(attack.load(), decay.load(), sustain.load(), release.load());
+            filterAdsr.updateADSR(filterAttack.load(), filterDecay.load(), filterSustain.load(), filterRelease.load());
         }
     }
 }
