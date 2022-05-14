@@ -70,7 +70,7 @@ void SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int outpu
     }
     
     gain.prepare(spec);
-    gain.setGainLinear(0.07f);
+    gain.setGainLinear(0.10f);
 
     isPrepared = true;
 
