@@ -5,6 +5,9 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               cppLanguageStandard="17">
   <MAINGROUP id="QkUQFJ" name="3OSCsynth">
+    <GROUP id="{B118AFAF-E286-60AE-BB53-91AF87FA2059}" name="Resource">
+      <FILE id="HS1aXs" name="Logo.png" compile="0" resource="1" file="Resource/Logo.png"/>
+    </GROUP>
     <GROUP id="{588E55D1-F563-243D-9284-EF0191B5994F}" name="Source">
       <GROUP id="{9774CDF4-866D-B945-49D9-E90C2241AC78}" name="UI">
         <FILE id="cQePDZ" name="AdsrComponent.cpp" compile="1" resource="0"

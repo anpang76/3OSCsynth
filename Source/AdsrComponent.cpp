@@ -12,7 +12,7 @@
 #include "AdsrComponent.h"
 
 //==============================================================================
-AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts)
+AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts, juce::String labelName, juce::String attackId, juce::String decayId, juce::String sustainId, juce::String releaseId)
 {
     attackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "ATTACK", attackSlider);
     decayAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "DECAY", decaySlider);
@@ -30,6 +30,10 @@ AdsrComponent::AdsrComponent(juce::AudioProcessorValueTreeState& apvts)
     setSliderLabel(sustainLabel, "S");
     setSliderLabel(releaseLabel, "R");
 
+    AdsrLabel.setFont(16.0f);
+    AdsrLabel.setText(labelName, juce::dontSendNotification);
+    AdsrLabel.setJustificationType(juce::Justification::topLeft);
+    addAndMakeVisible(AdsrLabel);
 }
 
 AdsrComponent::~AdsrComponent()
@@ -43,9 +47,6 @@ void AdsrComponent::paint (juce::Graphics& g)
     g.setColour(juce::Colour::fromRGB(40, 44, 49));
     g.fillRoundedRectangle(bounds.toFloat(), 5.0f);
 
-    g.setColour(juce::Colour::fromRGB(209, 214, 218));
-    g.setFont(15.0f);
-    g.drawText("Envelope", 5, 10, 100, 25, juce::Justification::centred);
 }
 
 void AdsrComponent::resized()
@@ -68,6 +69,7 @@ void AdsrComponent::resized()
     sustainLabel.setBounds(sustainSlider.getX(), sustainSlider.getBottom()+5, sliderWidth, labelHeight);
     releaseLabel.setBounds(releaseSlider.getX(), releaseSlider.getBottom()+5, sliderWidth, labelHeight);
 
+    AdsrLabel.setBounds(10, 10, 145, 25);
 
 }
 

@@ -17,18 +17,33 @@ _3OSCsynthAudioProcessorEditor::_3OSCsynthAudioProcessorEditor (_3OSCsynthAudioP
     , osc1(audioProcessor.apvts, "OSC1","OSC1GAIN","OSC1PITCH")
     , osc2(audioProcessor.apvts, "OSC2", "OSC2GAIN", "OSC2PITCH")
     , osc3(audioProcessor.apvts, "OSC3", "OSC3GAIN", "OSC3PITCH")
-    , adsr(audioProcessor.apvts)
+    , adsr(audioProcessor.apvts, "Envelope", "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
+    , filter(audioProcessor.apvts, "FILTERTYPE", "FILTERCUTOFF", "FILTERRESONANCE")
+    , filterAdsr(audioProcessor.apvts,"Filter Envelope", "ATTACK", "DECAY", "SUSTAIN", "RELEASE")
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+   //adding logo
+
+    auto logoImage = juce::ImageCache::getFromMemory(BinaryData::Logo_png, BinaryData::Logo_pngSize);
+    
+    if (logoImage.isValid())
+        logo.setImage(logoImage, juce::RectanglePlacement::stretchToFit);
+    else
+        jassertfalse;
+
+
+
+  
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);
     addAndMakeVisible(osc3);
     addAndMakeVisible(adsr);
-    
+    addAndMakeVisible(filter);
+    addAndMakeVisible(filterAdsr);
+    addAndMakeVisible(logo);
 
-    setSize(830, 630);
+   
+
+    setSize(830, 500);
 }
 
 _3OSCsynthAudioProcessorEditor::~_3OSCsynthAudioProcessorEditor()
@@ -54,4 +69,8 @@ void _3OSCsynthAudioProcessorEditor::resized()
     osc2.setBounds(osc1.getRight() + 15, posy, oscWidth, oscHeight);
     osc3.setBounds(osc2.getRight() + 15, posy, oscWidth, oscHeight);
     adsr.setBounds(osc3.getX(), osc1.getBottom()+15, oscWidth, oscHeight*2);
+    filter.setBounds(10, osc1.getBottom() + 15, oscWidth, oscHeight+50);
+    filterAdsr.setBounds(osc1.getRight() + 15, osc1.getBottom() + 15, oscWidth, oscHeight * 2);
+
+    logo.setBounds(10, filter.getBottom(), oscWidth, 90);
 }

@@ -18,12 +18,25 @@
 class FilterComponent  : public juce::Component
 {
 public:
-    FilterComponent();
+    FilterComponent(juce::AudioProcessorValueTreeState& apvts, juce::String filterTypeId, juce::String cutoffId, juce::String resonanceId);
     ~FilterComponent() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
+    juce::ComboBox filterTypeSelector;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeAttachment;
+    juce::Label filterLabel;
+
+    juce::Slider cutoffSlider;
+    juce::Slider resonanceSlider;
+
+    juce::Label cutoffLabel;
+    juce::Label resonanceLabel;
+
+    void setSliderParams(juce::Slider& slider);
+    void setSliderLabel(juce::Label& label, juce::String label_name);
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
 };
